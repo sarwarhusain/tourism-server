@@ -68,10 +68,10 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get('/hello', (req, res) => {
-  res.send('hello updated here')
+app.get('/', (req, res) => {
+  res.send('food server is running')
 })
 
 app.listen(port, () => {
   console.log('Running delivery on port', port);
-})
+});
