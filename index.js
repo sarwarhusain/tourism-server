@@ -18,13 +18,15 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
   try {
-    await client.connect();
+    await client.connect(err);
     const database = client.db('delivery');
     const servicesCollection = database.collection('services');
+    const bookingsCollection = database.collection('bookings');
+
 
     // GET API
     app.get('/services', async (req, res) => {
-      const cursor = servicesCollection.find({});
+      const cursor = await servicesCollection.find({}).toArray();
       const services = await cursor.toArray();
       res.send(services);
     });
@@ -37,6 +39,9 @@ async function run() {
       const service = await servicesCollection.findOne(query);
       res.json(service);
     })
+    // MY ORDERS
+    // app.get('/myOrders/:email',)
+
 
     // POST API
     app.post('/itemDelivery', async (req, res) => {
@@ -47,6 +52,8 @@ async function run() {
       console.log(result);
       res.json(result)
     });
+
+
     // DELETE API
     app.delete('/services/:id', async (req, res) => {
       const id = req.params.id;
@@ -61,6 +68,13 @@ async function run() {
       const result = await servicesCollection.deleteOne(query);
       res.json(result);
     })
+
+    // confirm order
+    app.post("/confirmOrder", async (req, res) => {
+      const result = await bookingsCollection.insertOne(req.body);
+      res.send(result);
+    });
+
   }
   finally {
     // await client.close();
@@ -75,3 +89,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log('Running delivery on port', port);
 });
+
+
