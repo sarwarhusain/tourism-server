@@ -63,7 +63,7 @@ async function run() {
     });
 
 
-    // confirm order
+    // cofirm order
     app.post('/confirmOrder', async (req, res) => {
       const result = await ordersCollection.insertOne(req.body);
       res.send(result);
@@ -72,13 +72,14 @@ async function run() {
     // my confirmOrder
 
     app.get('/myOrders/:email', async (req, res) => {
-      const result = await bookingsCollection
+      const result = await ordersCollection
         .find({ email: req.params.email })
         .toArray();
       res.send(result);
     });
 
-    /// delete order
+    // delete order
+
     app.delete('/deleteOrder/:id', async (req, res) => {
       const result = await ordersCollection.deleteOne({
         _id: ObjectId(req.params.id),
@@ -86,7 +87,7 @@ async function run() {
       res.send(result);
     });
 
-    // 
+
   }
   finally {
     // await client.close();
