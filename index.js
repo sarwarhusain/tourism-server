@@ -21,7 +21,7 @@ async function run() {
     await client.connect();
     const database = client.db('delivery');
     const servicesCollection = database.collection('services');
-    const bookingsCollection = database.collection('bookings');
+    const ordersCollection = database.collection('bookings');
 
 
     // GET API
@@ -38,7 +38,7 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const service = await servicesCollection.findOne(query);
       res.json(service);
-    })
+    });
     // MY ORDERS
     // app.get('/myOrders/:email',)
 
@@ -60,21 +60,28 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await servicesCollection.deleteOne(query);
       res.json(result);
-    })
+    });
     // DELETE API
     app.delete('/services/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await servicesCollection.deleteOne(query);
       res.json(result);
-    })
+    });
 
     // confirm order
     app.post("/confirmOrder", async (req, res) => {
-      const result = await bookingsCollection.insertOne(req.body);
+      const result = await ordersCollection.insertOne(req.body);
       res.send(result);
     });
 
+    // my confirmOrder
+    app.get("/myOrders/:email", async (req, res) => {
+      const result = await ordersCollection
+        .find({ email: req.params.email })
+        .toArray();
+      res.send(result);
+    });
   }
   finally {
     // await client.close();
